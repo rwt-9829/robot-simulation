@@ -46,8 +46,8 @@ class RobotDynamics:
         return self.dot
     
     def update(self, controls: ControlInputs) -> None:
-        self.dot = self.computeDerivative(self.state, controls.vl, controls.vr) # calculate new derivative
-        self.state = self.integrateState(self.dt, self.state, self.dot) # integrate by dT
+        self.dot = self.computeDerivative(state=self.state, vl=controls.vl, vr=controls.vr) # calculate new derivative
+        self.state = self.integrateState(state=self.state, dot=self.dot) # integrate by dT
         
         return
 
@@ -71,7 +71,7 @@ class RobotDynamics:
 
         return dot
     
-    def integrateState(self, dT: float, state: RobotState, dot: RobotDerivativeState) -> RobotState:
+    def integrateState(self, state: RobotState, dot: RobotDerivativeState) -> RobotState:
         """
         @brief -> Integrates the vehicle state using trapezoidal integration
         @param: dT -> sampling time [s]
@@ -81,9 +81,9 @@ class RobotDynamics:
         """
 
         new_state = RobotState() # create empty instance
-        new_state.px = state.px + dot.vx * dT
-        new_state.py = state.py + dot.vy * dT
-        new_state.phi = state.phi + dot.w * dT
+        new_state.px = state.px + dot.vx * self.dt
+        new_state.py = state.py + dot.vy * self.dt
+        new_state.phi = state.phi + dot.w * self.dt
 
         return new_state
 

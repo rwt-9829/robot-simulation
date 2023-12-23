@@ -94,13 +94,12 @@ class MainWindow(QMainWindow):
         """
         self.time += dt 
         # TODO: Change this to get the inputs from the sliders
-        inputs = ControlInputs(20, 21)
+        inputs = ControlInputs(vl=20, vr=20.05)
         self.robot_simulation.takeStep(inputs) # advance robot in time
         
         robot_state = self.robot_simulation.getVehicleState()
         robot_dot = self.robot_simulation.getVehicleDotState()
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
-        print(robot_state.px, robot_state.py, robot_dot.vx, robot_dot.vy)
 
     def playSimulation(self):
         """

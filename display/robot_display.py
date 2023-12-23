@@ -10,6 +10,7 @@ import pyqtgraph
 import numpy as np
 
 from utilities.constants import *
+from utilities.rotations import Cartesian2Pixel
 import time
 
 meters_to_pixel = 1
@@ -70,9 +71,8 @@ class RobotDisplay(QGraphicsItem):
     
     def updatePosition(self, x, y, phi) -> None:
         # update the position coordinates and heading
-        self.x_pos = x
-        self.y_pos = y
-        self.heading = np.deg2rad(phi)
+        self.x_pos, self.y_pos = Cartesian2Pixel(x, y)
+        self.heading = phi
 
         self.updateRobot() # update robot's position
         
