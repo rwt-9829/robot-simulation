@@ -9,16 +9,19 @@ class Plotter(pg.PlotWidget):
     """
     creates a pyqtgraph plot widget
     """
-    update_plot_signal = pyqtSignal(float, float)
+    update_plot_signal = pyqtSignal(float, list)
     def __init__(self,
                  title: str,
                  x_label: str,
                  y_label: str,
-                 legend: str=None) -> None:
+                 num_plots: int=1,
+                 legends: list=None) -> None:
         super().__init__(parent=None)
 
+        self.line_colors = [plot_blue, plot_red, plot_orange]
         self.time = []
-        self.data = []
+        self.data_sets = []
+        self.plot_lines = []
 
         # figure attributes
         self.setBackground(plot_white)
@@ -36,11 +39,22 @@ class Plotter(pg.PlotWidget):
         self.plot_item.getAxis('bottom').setTextPen('k')
         self.plot_item.getAxis('left').setTextPen('k')
 
+        self.plot_item.addLegend(labelTextColor=plot_black, brush=plot_grey)
+
+        # iterate over the number of lines and add a plot instance
+        for idx in range(num_plots): 
+            self.data_sets.append([]) # append a list for this line set
+            if legends is not None:
+                print(legends[idx])
+                self.plot_lines.append(self.plot_item.plot(name=legends[idx], pen=pg.mkPen(self.line_colors[idx])))
+            else:
+                self.plot_lines.append(self.plot_item.plot(pen=pg.mkPen(self.line_colors[idx])))
 
         self.update_plot_signal.connect(self.update_plot)
 
-    def update_plot(self, time: float, new_data:float) -> None:
-        self.time.append(time)
-        self.data.append(new_data)
-        self.getPlotItem().plot().setData(self.time, self.data, pen=pg.mkPen('b'))
+    def update_plot(self, time: float, new_data:list) -> None:
+        self.time.append(time) # add time point
 
+        for data_set, plot_line, data_point in zip(self.data_sets, self.plot_lines, new_data):
+            data_set.append(data_point) # append the data to its corresponding list
+            plot_line.setData(self.time, data_set)

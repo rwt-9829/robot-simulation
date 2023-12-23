@@ -5,8 +5,12 @@ File that holds all the constants used throughout the simulation
 from PyQt5.QtGui import (QColor)
 
 ### ----- plot constants ----- ####
-plot_black = 'k'
-plot_white = 'w'
+plot_black = (0, 0, 0)
+plot_white = (255, 255, 255)
+plot_red = (255, 0, 0)
+plot_orange = (0.8500, 0.3250, 0.0980)
+plot_blue = (66, 138, 245)
+plot_grey = (188, 188, 188, 100)
 
 ### ----- scaling constants ----- ###
 m2x = 100 # meter to pixel
