@@ -55,9 +55,9 @@ class RobotDynamics:
         """
         @brief  -> computes the robot's time-derivative given the linear velocities in the
                     robot's local frame
-        @param phi  -> robot's heading (rad)
-        @param vl   -> left wheel's linear velocity input (cm/s)
-        @param vr   -> right wheel's linear velocity input (cm/s)
+        @param phi  -> robot's heading [rad]
+        @param vl   -> left wheel's linear velocity input [cm/s]
+        @param vr   -> right wheel's linear velocity input [cm/s]
         @return -> time derivative state
         """
         dot = RobotDerivativeState() # empty state

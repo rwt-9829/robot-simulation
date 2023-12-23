@@ -24,9 +24,9 @@ class RobotDisplay(QGraphicsItem):
         super().__init__(parent)
 
         self.painter = QPainter()
-        self.x_pos = origin_x # robot's position in the x-axis
-        self.y_pos = origin_y # robot's position in the y-axis
-        self.heading = origin_phi # robot's heading
+        self.x_pos = origin_x # robot's position in the x-axis [cm]
+        self.y_pos = origin_y # robot's position in the y-axis [cm]
+        self.heading = origin_phi # robot's heading [rad]
         self.robot = QPolygonF()
 
         # robot item with initial vertix locations. This will be updated throughout the simulation
@@ -72,6 +72,10 @@ class RobotDisplay(QGraphicsItem):
     def updatePosition(self, x, y, phi) -> None:
         # update the position coordinates and heading
         self.x_pos, self.y_pos = Cartesian2Pixel(x, y)
+
+        # multiply to convert meters to our pixel ratio
+        self.x_pos = self.x_pos * m2x 
+        self.y_pos = self.y_pos * m2x
         self.heading = phi
 
         self.updateRobot() # update robot's position
