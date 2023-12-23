@@ -1,27 +1,14 @@
 import numpy as np
 
-# TODO: NEED TO FIX THIS
-def Global2Moving(state: np.array) -> np.array:
+def Cartesian2Pixel(x: float, y:float) -> tuple:
     """
-    rotates vector in the global frame to the moving frame by angle phi
-    """
-    phi = state[2] # rotation angle
+    Converts Cartesian coordinates to Pixel coordinates used by computers
+    x-axis remain the same (postive going right) but y-axes are opposite
 
-    R = np.array([[np.cos(phi),     np.sin(phi),    0],
-                  [-np.sin(phi),    np.cos(phi),    0],
-                  [0,               0,              1]])
-    
-    return np.matmul(R, state)
+    @input: x (float) -> x coordinate in cartesian frame
+    @input: y (float) -> y coordinate in cartesian frame
 
-def Moving2Global(state: np.array) -> np.array:
+    @return (x, y) (float) -> Pixel frame x and y coordinates
     """
-    @brief  -> transforms vector from moving frame to global frame
-    @input state
-    """
-    phi = -state[2] # rotation angle
 
-    R = np.array([[np.cos(phi),     np.sin(phi),    0],
-                  [-np.sin(phi),    np.cos(phi),    0],
-                  [0,               0,              1]])
-    
-    return np.matmul(R, state)
+    return (x, -y)
