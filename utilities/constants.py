@@ -4,20 +4,22 @@ File that holds all the constants used throughout the simulation
 
 from PyQt5.QtGui import (QColor)
 
+### ----- scaling constants ----- ###
+m2x = 100 # meter to pixel
+
 ### ----- Robot Constants ----- ###
-# TODO: Need to make the velocities depend on the RPM of the wheel and make the RPM the inputs to sliders
 L = .20         # wheel base (distance between both wheels) [m]
 wheel_r = 0.03  # wheel radius [m]
-scaling_unit = 0.25 # determines the relative size of the front tip
-robot_size = 50. # size of sides
-front_size = robot_size * scaling_unit
+robot_size = 50. # size of robot sides [px]
 
-vmax = 20 # wheels max linear velocity [cm/s]
+scaling_unit = 0.25 # determines the relative size of the front tip of the robot
+front_size = robot_size * scaling_unit # size of robot's front tip
+
+vmax = 1 # wheels max linear velocity [m/s]
 vmin = -vmax 
 
-
 ### ----- Simulation Constants ----- ###
-dt = 0.01 # 20ms timer
+dt = 0.01 # 10ms timer
 
 ### ----- Application Constants ----- ###
 window_height = 1000

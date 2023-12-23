@@ -9,9 +9,9 @@ class RobotState:
         Defines vehicle states to define the robot's current position.
         Frame: Global
 
-        @param px: initial robot x position in global frame (m)
-        @param py: initial robot y position in global frame (m)
-        @param phi: initial orientation of robot (rad)
+        @param px: initial robot x position in global frame [m]
+        @param py: initial robot y position in global frame [m]
+        @param phi: initial orientation of robot [rad]
         """
         # state vector
         self.px = px
@@ -33,9 +33,9 @@ class RobotDerivativeState:
         Frame: Global
 
         @param local_v  -> linear velocity in the robot's local frame
-        @param vx: robot x velocity in the global frame (m/s)
-        @param vy: robot y velocity in the global frame (m/s)
-        @param r_rate: robot turning rate
+        @param vx: robot x velocity in the global frame [m/s]
+        @param vy: robot y velocity in the global frame [m/s]
+        @param r_rate: robot turning rate [rad/s]
         """
 
         # derivative state vector

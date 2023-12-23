@@ -1,3 +1,10 @@
+"""
+Author: Miguel Tamayo
+
+class that holds the main PyQt5 window with all the simulation assets
+
+"""
+
 # This is like Chapter 4 in the repository
 # uses base interface in repository
 import sys
@@ -93,8 +100,7 @@ class MainWindow(QMainWindow):
         internal method called in a thread to handle simulation updates
         """
         self.time += dt 
-        # TODO: Change this to get the inputs from the sliders
-        inputs = ControlInputs(vl=20, vr=20.05)
+        inputs = ControlInputs(vl=0.4, vr=0.4)
         self.robot_simulation.takeStep(inputs) # advance robot in time
         
         robot_state = self.robot_simulation.getVehicleState()
