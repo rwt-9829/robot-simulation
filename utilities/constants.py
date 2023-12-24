@@ -28,6 +28,9 @@ window_width = 1500
 canvas_height = 800
 canvas_width = 800
 
+button_width = int(canvas_width / 3.2)
+slider_width = int(canvas_width / 2.5)
+
 ### ------ Colors ----- ###
 background_color = QColor(57, 57, 57)
 robot_color = QColor(200, 200, 200)

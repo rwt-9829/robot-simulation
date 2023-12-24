@@ -52,37 +52,27 @@ class MainWindow(QMainWindow):
         # create scene to handle robot item
         self.scene = QGraphicsScene(canvas)
         self.scene.setBackgroundBrush(background_color)
-        self.robot = RobotDisplay() # create robot instance at th origin facing x+
-        self.scene.addItem(self.robot)
+        self.robot = RobotDisplay() # create robot instance at the origin facing x+
+        self.scene.addItem(self.robot) # add the robot to the scene
 
-        canvas.setScene(self.scene)
+        canvas.setScene(self.scene) # add the scene to the canvas
 
-        ### ----- controls area widget ----- ###
-        slider_width = int(canvas_width / 2.5)
-        controls_layout = QHBoxLayout()
-        controls_widget = QWidget()
-
-        vr_slider = Slider(vmin, vmax, slider_width) # right wheel velocity slider
-        # # vl_slider = Slider(vmin, vmax, slider_width) # left wheel velocity slider
-        
-        controls_layout.addWidget(vr_slider)
-        # # controls_layout.addWidget(vl_slider)
-
-        controls_widget.setLayout(controls_layout)
-        # need to add sliders here to the input velocities and stuff
-        ### ----- play and stop buttons ----- ###
-        button_width = int(canvas_width / 2.5)
+        ### ----- play, stop, and reset buttons ----- ###
         button_layout = QHBoxLayout()
         button_widget = QWidget()
 
-        self.play_button = Button(txt="Play", width=button_width, parent=mainWdiget)
+        self.play_button = Button(txt="Play", width=button_width)
         self.play_button.buttonClickedSignal.connect(self.playSimulation)
 
-        self.pause_button = Button(txt="Pause", width=button_width, parent=mainWdiget)
+        self.pause_button = Button(txt="Pause", width=button_width)
         self.pause_button.buttonClickedSignal.connect(self.pauseSimulation)
+
+        self.reset_button = Button(txt="Reset", width=button_width)
+        self.reset_button.buttonClickedSignal.connect(self.resetSimulation)
 
         button_layout.addWidget(self.play_button)
         button_layout.addWidget(self.pause_button)
+        button_layout.addWidget(self.reset_button)
 
         button_widget.setLayout(button_layout)
 
@@ -118,9 +108,24 @@ class MainWindow(QMainWindow):
 
     def pauseSimulation(self):
         """
-        psues simulation if currently playing
+        pauses simulation if currently playing
         """
         self.play_button.setDisabled(False)
         self.pause_button.setDisabled(True)
         self.simulationPaused = True
         self.simulationTimedThread.stop()
+
+    def resetSimulation(self):
+        """
+        stops and resets the simulation
+        """
+        self.pauseSimulation() # pause the simulation
+
+        self.time = 0 # reset the simulation time
+
+        # reset the robot drawing
+        self.robot_simulation.reset()
+        robot_state = self.robot_simulation.getVehicleState()
+        self.scene.removeItem(self.robot)
+        self.scene.addItem(self.robot)
+        self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
