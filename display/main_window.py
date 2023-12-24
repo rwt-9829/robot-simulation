@@ -70,19 +70,23 @@ class MainWindow(QMainWindow):
 
         controls_widget.setLayout(controls_layout)
         # need to add sliders here to the input velocities and stuff
-        ### ----- play and stop buttons ----- ###
-        button_width = int(canvas_width / 2.5)
+
+        ### ----- play, stop, and reset buttons ----- ###
         button_layout = QHBoxLayout()
         button_widget = QWidget()
 
-        self.play_button = Button(txt="Play", width=button_width, parent=mainWdiget)
+        self.play_button = Button(txt="Play", width=button_width)
         self.play_button.buttonClickedSignal.connect(self.playSimulation)
 
-        self.pause_button = Button(txt="Pause", width=button_width, parent=mainWdiget)
+        self.pause_button = Button(txt="Pause", width=button_width)
         self.pause_button.buttonClickedSignal.connect(self.pauseSimulation)
+
+        self.reset_button = Button(txt="Reset", width=button_width)
+        self.reset_button.buttonClickedSignal.connect(self.resetSimulation)
 
         button_layout.addWidget(self.play_button)
         button_layout.addWidget(self.pause_button)
+        button_layout.addWidget(self.reset_button)
 
         button_widget.setLayout(button_layout)
 
@@ -118,9 +122,15 @@ class MainWindow(QMainWindow):
 
     def pauseSimulation(self):
         """
-        psues simulation if currently playing
+        pauses simulation if currently playing
         """
         self.play_button.setDisabled(False)
         self.pause_button.setDisabled(True)
         self.simulationPaused = True
         self.simulationTimedThread.stop()
+
+    def resetSimulation(self):
+        """
+        stops and resets the simulation
+        """
+        self.pauseSimulation() # pause the simulation
