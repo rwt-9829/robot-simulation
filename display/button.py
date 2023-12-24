@@ -8,37 +8,31 @@ import typing
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QSlider, QVBoxLayout, QPushButton
 
-class Button(QWidget):
+class Button(QPushButton):
     """
     creates a PyQt5 button widget
 
-    @input: txt (str)           -> text that will display on the button
-    @input: width (int)         -> button width 
-    @input: parent (QWidget)    -> parent widget that will hold the button
+    @input txt (str)    -> text that will display on the button
+    @input width (int)  -> button width
 
-    @return: None
+    @return None
     """
     buttonClickedSignal = pyqtSignal()
     def __init__(self,
                  txt: str,
-                 width: int,
-                 parent: QWidget) -> None:
-        super().__init__(parent)
+                 width: int) -> None:
+        super().__init__(parent=None)
 
-        self.button = QPushButton(txt, parent)
-        self.button.setFixedWidth(width)
-        self.button.clicked.connect(self.clicked_event)
+        self.setFixedWidth(width) # set the width of the button
+        self.setText(txt) # set the text displayed on the button
+        self.clicked.connect(self.button_clicked) # connect the button to a function
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.button)
-        self.setLayout(layout)
-
-    def clicked_event(self) -> None:
+    def button_clicked(self) -> None:
         """
-        emits a signal when this button has been clicked 
+        emits a buttonClickedSignal signal when this button has been clicked
 
-        @input: None
-        
-        @return: None
+        @input None
+
+        @return none
         """
         self.buttonClickedSignal.emit()
