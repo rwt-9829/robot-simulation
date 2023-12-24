@@ -1,12 +1,3 @@
-"""
-Author: Miguel Tamayo
-
-class that holds the main PyQt5 window with all the simulation assets
-
-"""
-
-# This is like Chapter 4 in the repository
-# uses base interface in repository
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton, QGridLayout, QGraphicsView,
                              QGraphicsScene, QGraphicsLineItem, QHBoxLayout)
@@ -16,6 +7,7 @@ from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QTimer, QRectF, QRect
 import numpy as np
 
 from .robot_display import RobotDisplay
+from .plotter import Plotter
 from .slider import Slider
 from .button import Button
 from .robot_simulate import RobotSimulate
@@ -70,6 +62,7 @@ class MainWindow(QMainWindow):
 
         controls_widget.setLayout(controls_layout)
         # need to add sliders here to the input velocities and stuff
+
         ### ----- play and stop buttons ----- ###
         button_width = int(canvas_width / 2.5)
         button_layout = QHBoxLayout()
@@ -86,9 +79,21 @@ class MainWindow(QMainWindow):
 
         button_widget.setLayout(button_layout)
 
-        ### ----- Add widgets to the layout ----- ###
+        ### ----- position graphs ----- ###
+        position_graph_widget = QWidget()
+        position_graph_layout = QHBoxLayout()
+
+        self.x_pos_plot = Plotter(title= "x-axis position", x_label="time (s)", y_label="position (m)")
+        self.y_pos_plot = Plotter(title="y-axis position", x_label="time (s)", y_label="position (m)")
+
+        position_graph_layout.addWidget(self.x_pos_plot)
+        position_graph_layout.addWidget(self.y_pos_plot)
+        position_graph_widget.setLayout(position_graph_layout)
+
+        ### ----- Add widgets to the main layout ----- ###
         layout.addWidget(canvas, 0, 0)
         layout.addWidget(button_widget, 1, 0)
+        layout.addWidget(position_graph_widget, 0, 1)
 
         ### ----- Simulation Timer ----- ###
         self.simulationTimedThread = QTimer()

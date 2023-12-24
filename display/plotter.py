@@ -25,6 +25,7 @@ class Plotter(pg.PlotWidget):
 
         # figure attributes
         self.setBackground(plot_white)
+        self.setFixedSize(350, 350)
         
         # plot attributes 
         self.plot_item = self.getPlotItem()
@@ -39,7 +40,8 @@ class Plotter(pg.PlotWidget):
         self.plot_item.getAxis('bottom').setTextPen('k')
         self.plot_item.getAxis('left').setTextPen('k')
 
-        self.plot_item.addLegend(labelTextColor=plot_black, brush=plot_grey)
+        if legends is not None:
+            self.plot_item.addLegend(labelTextColor=plot_black, brush=plot_grey)
 
         # iterate over the number of lines and add a plot instance
         for idx in range(num_plots): 

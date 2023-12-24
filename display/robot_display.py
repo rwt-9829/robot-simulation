@@ -63,7 +63,7 @@ class RobotDisplay(QGraphicsItem):
     def paint(self, painter, option, widget) -> None:
 
         # draw the custom polygon
-        color = QColor(0, 255, 0)
+        color = QColor(robot_color)
         painter.setBrush(QBrush(color))
         painter.drawPolygon(self.robot)
 

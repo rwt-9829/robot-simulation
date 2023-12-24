@@ -38,5 +38,5 @@ canvas_width = 800
 
 ### ------ Colors ----- ###
 background_color = QColor(57, 57, 57)
-robot_color = QColor(200, 200, 200)
+robot_color = QColor(161, 217, 139)
 
