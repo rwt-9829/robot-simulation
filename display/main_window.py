@@ -52,24 +52,10 @@ class MainWindow(QMainWindow):
         # create scene to handle robot item
         self.scene = QGraphicsScene(canvas)
         self.scene.setBackgroundBrush(background_color)
-        self.robot = RobotDisplay() # create robot instance at th origin facing x+
-        self.scene.addItem(self.robot)
+        self.robot = RobotDisplay() # create robot instance at the origin facing x+
+        self.scene.addItem(self.robot) # add the robot to the scene
 
-        canvas.setScene(self.scene)
-
-        ### ----- controls area widget ----- ###
-        slider_width = int(canvas_width / 2.5)
-        controls_layout = QHBoxLayout()
-        controls_widget = QWidget()
-
-        vr_slider = Slider(vmin, vmax, slider_width) # right wheel velocity slider
-        # # vl_slider = Slider(vmin, vmax, slider_width) # left wheel velocity slider
-        
-        controls_layout.addWidget(vr_slider)
-        # # controls_layout.addWidget(vl_slider)
-
-        controls_widget.setLayout(controls_layout)
-        # need to add sliders here to the input velocities and stuff
+        canvas.setScene(self.scene) # add the scene to the canvas
 
         ### ----- play, stop, and reset buttons ----- ###
         button_layout = QHBoxLayout()
@@ -134,3 +120,12 @@ class MainWindow(QMainWindow):
         stops and resets the simulation
         """
         self.pauseSimulation() # pause the simulation
+
+        self.time = 0 # reset the simulation time
+
+        # reset the robot drawing
+        self.robot_simulation.reset()
+        robot_state = self.robot_simulation.getVehicleState()
+        self.scene.removeItem(self.robot)
+        self.scene.addItem(self.robot)
+        self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
