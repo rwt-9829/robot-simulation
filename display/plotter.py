@@ -22,6 +22,8 @@ class Plotter(pg.PlotWidget):
         self.time = []
         self.data_sets = []
         self.plot_lines = []
+        num_plots
+        legends
 
         # figure attributes
         self.setBackground(plot_white)
@@ -40,6 +42,8 @@ class Plotter(pg.PlotWidget):
         self.plot_item.getAxis('bottom').setTextPen('k')
         self.plot_item.getAxis('left').setTextPen('k')
 
+
+
         if legends is not None:
             self.plot_item.addLegend(labelTextColor=plot_black, brush=plot_grey)
 
@@ -47,7 +51,6 @@ class Plotter(pg.PlotWidget):
         for idx in range(num_plots): 
             self.data_sets.append([]) # append a list for this line set
             if legends is not None:
-                print(legends[idx])
                 self.plot_lines.append(self.plot_item.plot(name=legends[idx], pen=pg.mkPen(self.line_colors[idx])))
             else:
                 self.plot_lines.append(self.plot_item.plot(pen=pg.mkPen(self.line_colors[idx])))
@@ -59,4 +62,10 @@ class Plotter(pg.PlotWidget):
 
         for data_set, plot_line, data_point in zip(self.data_sets, self.plot_lines, new_data):
             data_set.append(data_point) # append the data to its corresponding list
+            plot_line.setData(self.time, data_set)
+
+    def reset_plot(self) -> None:
+        self.time.clear() # clear time list
+        for data_set, plot_line in zip(self.data_sets, self.plot_lines):
+            data_set.clear()
             plot_line.setData(self.time, data_set)
