@@ -1,12 +1,3 @@
-"""
-Author: Miguel Tamayo
-
-class that holds the main PyQt5 window with all the simulation assets
-
-"""
-
-# This is like Chapter 4 in the repository
-# uses base interface in repository
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton, QGridLayout, QGraphicsView,
                              QGraphicsScene, QGraphicsLineItem, QHBoxLayout)
@@ -16,6 +7,7 @@ from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QTimer, QRectF, QRect
 import numpy as np
 
 from .robot_display import RobotDisplay
+from .plotter import Plotter
 from .slider import Slider
 from .button import Button
 from .robot_simulate import RobotSimulate
@@ -43,7 +35,6 @@ class MainWindow(QMainWindow):
         mainWdiget = QWidget()
         layout = QGridLayout()
         self.setCentralWidget(mainWdiget)
-        mainWdiget.setLayout(layout)
 
         ### ----- simulation canvas widget ----- ###
         canvas = QGraphicsView(mainWdiget) # create QGrahicsView object as a viewport to the drawings
@@ -76,9 +67,38 @@ class MainWindow(QMainWindow):
 
         button_widget.setLayout(button_layout)
 
-        ### ----- Add widgets to the layout ----- ###
-        layout.addWidget(canvas, 0, 0)
-        layout.addWidget(button_widget, 1, 0)
+        ### ----- position graphs ----- ###
+        pos_graph_widget = QWidget()
+        pos_graph_layout = QHBoxLayout()
+
+        self.x_pos_plot = Plotter(title= "x-axis position", x_label="time (s)", y_label="position (m)")
+        self.y_pos_plot = Plotter(title="y-axis position", x_label="time (s)", y_label="position (m)")
+
+        pos_graph_layout.addWidget(self.x_pos_plot)
+        pos_graph_layout.addWidget(self.y_pos_plot)
+        pos_graph_widget.setLayout(pos_graph_layout)
+
+        ### ----- velocity graphs ----- ###
+        vel_graph_widget = QWidget()
+        vel_graph_layout = QHBoxLayout()
+
+        self.x_vel_plot = Plotter(title="x-axis velocity", x_label="time (s)", y_label="velocity (m/s)")
+        self.y_vel_plot = Plotter(title="y-axis velocity", x_label="time (s)", y_label="velocity (m/s)")
+
+        vel_graph_layout.addWidget(self.x_vel_plot)
+        vel_graph_layout.addWidget(self.y_vel_plot)
+        vel_graph_widget.setLayout(vel_graph_layout)
+        
+        ### ----- Add widgets to the main layout ----- ###
+        # row | column | rowSpan | ColumnSpan
+        layout.addWidget(canvas, 0, 0, 2, 1)
+        layout.addWidget(button_widget, 2, 0, 1, 1)
+        layout.addWidget(pos_graph_widget, 0, 1, 1, 1)
+        layout.addWidget(vel_graph_widget, 1, 1, 1, 1)
+
+        layout.setSpacing(0)
+        layout.setRowStretch(3, 2)
+        mainWdiget.setLayout(layout)
 
         ### ----- Simulation Timer ----- ###
         self.simulationTimedThread = QTimer()
@@ -90,12 +110,19 @@ class MainWindow(QMainWindow):
         internal method called in a thread to handle simulation updates
         """
         self.time += dt 
-        inputs = ControlInputs(vl=0.4, vr=0.4)
+        inputs = ControlInputs(vl=0.4, vr=0.5)
         self.robot_simulation.takeStep(inputs) # advance robot in time
         
+        # update the robot
         robot_state = self.robot_simulation.getVehicleState()
         robot_dot = self.robot_simulation.getVehicleDotState()
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
+
+        # update plots
+        self.x_pos_plot.update_plot_signal.emit(self.time, [robot_state.px])
+        self.y_pos_plot.update_plot_signal.emit(self.time, [robot_state.py])
+        self.x_vel_plot.update_plot_signal.emit(self.time, [robot_dot.vx])
+        self.y_vel_plot.update_plot_signal.emit(self.time, [robot_dot.vy])
 
     def playSimulation(self):
         """
@@ -129,3 +156,9 @@ class MainWindow(QMainWindow):
         self.scene.removeItem(self.robot)
         self.scene.addItem(self.robot)
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
+
+        # reset the plots
+        self.x_pos_plot.reset_plot()
+        self.y_pos_plot.reset_plot()
+        self.x_vel_plot.reset_plot()
+        self.y_vel_plot.reset_plot()
