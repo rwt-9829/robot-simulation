@@ -13,5 +13,8 @@ framework.
 
 ## Setup
 
+## Next Step
+Currently working on sliders in order or manually steer the robot
+
 ## What I've Learned
 * Wheeled robot dynamics
