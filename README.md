@@ -11,4 +11,7 @@ around them. What better way than to build my own simulator?
 This simulation is currently being built using Python coding language and the [PyQt5](https://pypi.org/project/PyQt5/#:~:text=PyQt5%20is%20a%20comprehensive%20set,platforms%20including%20iOS%20and%20Android.)
 framework.
 
-## Future Addition
+## Setup
+
+## What I've Learned
+* Wheeled robot dynamics
