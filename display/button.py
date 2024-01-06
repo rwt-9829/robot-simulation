@@ -2,20 +2,25 @@
 Author: Miguel Tamayo
 
 button.py
-contains class for PyQt5 button widget
+Contains class for PyQt5 button widget
 """
+
 import typing
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QSlider, QVBoxLayout, QPushButton
 
 class Button(QPushButton):
     """
-    creates a PyQt5 button widget
+    Class representing PyQt5 button widget
+    
+    inputs:
+    -------
+        txt (str): text that will display on the button
+        width (int): button width
 
-    @input txt (str)    -> text that will display on the button
-    @input width (int)  -> button width
-
-    @return None
+    return:
+    -------
+        button (Button): PyQt5 button object
     """
     buttonClickedSignal = pyqtSignal()
     def __init__(self,
@@ -29,10 +34,6 @@ class Button(QPushButton):
 
     def button_clicked(self) -> None:
         """
-        emits a buttonClickedSignal signal when this button has been clicked
-
-        @input None
-
-        @return none
+        Emits a buttonClickedSignal signal when this button has been clicked
         """
         self.buttonClickedSignal.emit()
