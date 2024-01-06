@@ -18,7 +18,6 @@ from .plotter import Plotter
 from .slider import Slider
 from .button import Button
 from .robot_simulate import RobotSimulate
-from .robot_stats import RobotStats
 from inputs.control_inputs import ControlInputs
 from utilities.constants import *
 

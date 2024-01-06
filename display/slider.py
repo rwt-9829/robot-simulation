@@ -6,51 +6,62 @@ Contains class for PyQt5 slider widget
 """
 
 import typing
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QWidget, QSlider, QVBoxLayout
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QWidget, QSlider, QHBoxLayout, QLabel
 
 class Slider(QWidget):
     """
-    Class representing PyQt5 slider widget
-    
+    Class representing PyQt5 slider widget with labels and values
+
     inputs:
     -------
         min_val (int): slider's minimum value
         max_val (int): slider's maximum value
-        width (int): slider's object width
-        init_val (int): sliders initial value
+        width (int): slider object width
+        init_val (int): slider's initial value
+        tick_interval (int): sliders ticks
+        orientation (int): 1 -> horizontal; 0 -> vertical
 
     return:
     -------
-        button (Button): PyQt5 button object
+        slider (Slider): PyQt5 slider widget
     """
+    valueChangedSignal = pyqtSignal()
     def __init__(self,
+                 label: str,
                  min_val: int,
                  max_val: int,
                  width: int,
                  init_val: int = 0,
-                 parent=None) -> None:
-        super().__init__(parent)
+                 tick_interval: int = 2,
+                 orientation: int = 1) -> None:
+        super().__init__(parent=None)
 
-        self.slider = QSlider(QtCore.Qt.Horizontal)
+        layout = QHBoxLayout() # want a horizontal layout
+
+        label = QLabel(label) # slider's label
+        self.value = QLabel(f"{init_val}") # slider's value
+
+        # slider and alider attributes
+        self.slider = QSlider()
+        self.slider.setOrientation(orientation)
         self.slider.setRange(min_val, max_val)
-        self.slider.setValue(init_val)
-        self.slider.setTickInterval(5)
+        self.slider.setTickInterval(tick_interval)
         self.slider.setMaximumWidth(width)
-        # self.slider.
+
+        # add the items to the layout
+        layout.addWidget(label)
+        layout.addWidget(self.slider)
+        layout.addWidget(self.value)
+
+        # set the widget's layout
+        self.setLayout(layout)
 
         self.slider.valueChanged.connect(self.valueChanged)
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.slider)
-        self.setLayout(layout)
-    
-    def valueChanged(self, value):
+    def valueChanged(self, value: int) -> None:
         """
-        sets the slider's value to what it has been cahnges to
-
-        inputs:
-        -------
-            value: new slider value
+        Changes the displayed value on the slider and emmits a signal for any other outside updates        
         """
-        self.slider.setValue(value)
+        self.value.setText(str(value))
+        self.valueChangedSignal.emit()
