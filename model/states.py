@@ -1,43 +1,62 @@
+"""
+Author: Miguel Tamayo
+
+states.py
+Contains classes describing the robot states
+"""
+
 import numpy as np
 
 class RobotState:
+    """
+    Defines vehicle's current position
+
+    inputs:
+    -------
+        px (float): initial robot x position in global frame [m]
+        py (float): initial robot y position in global frame [m]
+        phi (float): initial robot orientation [rad]
+
+    return:
+    -------
+        state (RobotState): robot's state instance
+    """
     def __init__(self,
                  px: float = 0.0,
                  py: float = 0.0,
                  phi: float = 0.0) -> None:
-        """
-        Defines vehicle states to define the robot's current position.
-        Frame: Global
-
-        @param px: initial robot x position in global frame [m]
-        @param py: initial robot y position in global frame [m]
-        @param phi: initial orientation of robot [rad]
-        """
         # state vector
         self.px = px
         self.py = py
         self.phi = phi
 
     def __str__(self) -> str:
+        """
+        formats robot state into string
+        """
         return f"x: {self.px}, y: {self.py}, heading: {self.phi}"
 
         
 class RobotDerivativeState:
+    """
+    defines robot's rates
+
+    inputs:
+    -------
+        local_v (float): linear velocity in the robot's local frame
+        vx (float): robot x velocity in global frame [m/s]
+        vy (float): robot y velocity in global frame [m/s]
+        r_rate (float): robot turning rate [rad/s]
+
+    return:
+    -------
+        derivative (RobotDerivativeState): robot's derivative instance
+    """
     def __init__(self,
-                 local_v = 0.0,
+                 local_v: float = 0.0,
                  vx: float = 0.0,
                  vy: float = 0.0,
                  r_rate: float = 0.0) -> None:
-        """
-        Defines vehicle derivative state
-        Frame: Global
-
-        @param local_v  -> linear velocity in the robot's local frame
-        @param vx: robot x velocity in the global frame [m/s]
-        @param vy: robot y velocity in the global frame [m/s]
-        @param r_rate: robot turning rate [rad/s]
-        """
-
         # derivative state vector
         self.local_v = local_v
         self.vx = vx
@@ -45,4 +64,7 @@ class RobotDerivativeState:
         self.w = r_rate
 
     def __str__(self) -> str:
+        """
+        formats robot derivative state into string
+        """
         return f"vx: {self.vx}, vy: {self.vy}, rot rate: {self.w}"

@@ -1,3 +1,10 @@
+"""
+Author: Miguel Tamayo
+
+main_window.py
+Manages all the widgets on the user interface as well as the functions for interactive widgets
+"""
+
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton, QGridLayout, QGraphicsView,
                              QGraphicsScene, QGraphicsLineItem, QHBoxLayout)
@@ -18,14 +25,19 @@ from utilities.constants import *
 from PyQt5.QtWidgets import QWidget
 
 class MainWindow(QMainWindow):
-    # updateVehiclePositionSignal = pyqtSignal(list) # signal for redrawing vehicle
-
+    """
+    Class representing PyQt5 window
+    
+    return:
+    -------
+        window (MainWindow): PyQt5 window object
+    """
     def __init__(self) -> None:
         super().__init__()
         self.robot_simulation = RobotSimulate() # create an instance of the robot's simulation
         self.setWindowTitle("Robot Simulation")
 
-        self.simulationPaused = True
+        self.simulationPaused = True # begin with a paused simulation
 
         ### ----- pyqt5 application window ----- ###
         self.setGeometry(100, 100, window_width, window_height)
@@ -49,9 +61,11 @@ class MainWindow(QMainWindow):
         canvas.setScene(self.scene) # add the scene to the canvas
 
         ### ----- play, stop, and reset buttons ----- ###
+        # create button area
         button_layout = QHBoxLayout()
         button_widget = QWidget()
 
+        # create buttons and connect them to their functions
         self.play_button = Button(txt="Play", width=button_width)
         self.play_button.buttonClickedSignal.connect(self.playSimulation)
 
@@ -61,6 +75,7 @@ class MainWindow(QMainWindow):
         self.reset_button = Button(txt="Reset", width=button_width)
         self.reset_button.buttonClickedSignal.connect(self.resetSimulation)
 
+        # add the button objects to the button area
         button_layout.addWidget(self.play_button)
         button_layout.addWidget(self.pause_button)
         button_layout.addWidget(self.reset_button)
@@ -68,12 +83,15 @@ class MainWindow(QMainWindow):
         button_widget.setLayout(button_layout)
 
         ### ----- position graphs ----- ###
+        # create graph area
         pos_graph_widget = QWidget()
         pos_graph_layout = QHBoxLayout()
 
+        # create graph objects
         self.x_pos_plot = Plotter(title= "x-axis position", x_label="time (s)", y_label="position (m)")
         self.y_pos_plot = Plotter(title="y-axis position", x_label="time (s)", y_label="position (m)")
 
+        # add the grapsh to the graph area
         pos_graph_layout.addWidget(self.x_pos_plot)
         pos_graph_layout.addWidget(self.y_pos_plot)
         pos_graph_widget.setLayout(pos_graph_layout)
@@ -101,16 +119,17 @@ class MainWindow(QMainWindow):
         mainWdiget.setLayout(layout)
 
         ### ----- Simulation Timer ----- ###
+        # internal timer that advances simulation on every tick
         self.simulationTimedThread = QTimer()
         self.simulationTimedThread.timeout.connect(self.runSimulation)
         self.time = 0.0
 
     def runSimulation(self):
         """
-        internal method called in a thread to handle simulation updates
+        Internal method called in a thread to handle simulation updates
         """
-        self.time += dt 
-        inputs = ControlInputs(vl=0.4, vr=0.5)
+        self.time += dt # advance time
+        inputs = ControlInputs(vl=0.4, vr=0.5) # create inputs for robot
         self.robot_simulation.takeStep(inputs) # advance robot in time
         
         # update the robot
@@ -135,7 +154,7 @@ class MainWindow(QMainWindow):
 
     def pauseSimulation(self):
         """
-        pauses simulation if currently playing
+        Pauses simulation if currently playing
         """
         self.play_button.setDisabled(False)
         self.pause_button.setDisabled(True)
@@ -144,7 +163,7 @@ class MainWindow(QMainWindow):
 
     def resetSimulation(self):
         """
-        stops and resets the simulation
+        Stops and resets the simulation
         """
         self.pauseSimulation() # pause the simulation
 

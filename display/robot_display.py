@@ -1,3 +1,10 @@
+"""
+Author: Miguel Tamayo
+
+robot_display.py
+Contains class for PyQt5 GraphicsItem in charge or drawing the robot
+"""
+
 import typing
 from PyQt5 import QtCore, QtGui
 
@@ -16,6 +23,19 @@ import time
 meters_to_pixel = 1
 
 class RobotDisplay(QGraphicsItem):
+    """
+    Class representing PyQt5 QGraphics widget
+    
+    inputs:
+    -------
+        origin_phi: robot's starting heading
+        origin_x: robot's starting x position
+        origin_y: robot's starting y position
+    
+    return:
+    -------
+        display (RobotDisplay): PyQt5 QGraphicsItem object
+    """
     def __init__(self,
                  origin_phi = 0,
                  origin_x = 0,
@@ -34,7 +54,7 @@ class RobotDisplay(QGraphicsItem):
 
     def updateRobot(self):
         """
-        update self.robot object with new vertices given new self.x and self.y position
+        uUpdate self.robot object with new vertices given new self.x and self.y position
         robot's initial heading is facing towards x+ heading is positive counter-clockwise
         
         1. create vertices with heading rotation at the origin of the canvas
@@ -58,18 +78,40 @@ class RobotDisplay(QGraphicsItem):
         self.update()
 
     def boundingRect(self) -> QRectF:
+        """
+        returns the rectangle that bounds the robot's shape
+
+        return:
+        -------
+            bounding_rect (QRectF): robot's bounding rect
+        """
         return self.robot.boundingRect()
     
-    def paint(self, painter, option, widget) -> None:
+    def paint(self, painter: QPainter, option, widget) -> None:
+        """
+        draws the robot's polygon
 
+        inputs:
+        -------
+            painter (Qpainter): painter object in charge of the robot
+        """ 
         # draw the custom polygon
         color = QColor(robot_color)
         painter.setBrush(QBrush(color))
         painter.drawPolygon(self.robot)
 
-        return
+        return None
     
-    def updatePosition(self, x, y, phi) -> None:
+    def updatePosition(self, x: float, y: float, phi: float) -> None:
+        """
+        updates the robot's coordinates on the screen
+
+        inputs:
+        -------
+            x: new x position
+            y: new y position
+            phi: new heading
+        """
         # update the position coordinates and heading
         self.x_pos, self.y_pos = Cartesian2Pixel(x, y)
 
@@ -80,4 +122,4 @@ class RobotDisplay(QGraphicsItem):
 
         self.updateRobot() # update robot's position
         
-        return
+        return None

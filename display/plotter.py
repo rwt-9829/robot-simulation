@@ -1,3 +1,10 @@
+"""
+Author: Miguel Tamayo
+
+plotter.py
+Contains class for PyQtGraph widget
+"""
+
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
@@ -7,9 +14,21 @@ import pyqtgraph as pg
 
 class Plotter(pg.PlotWidget):
     """
-    creates a pyqtgraph plot widget
+    Class representing PyQtGraph plot widget
+    
+    inputs:
+    -------
+        title (str): plot title
+        x_label (str): x-axis label
+        y_label (str): y-axis label
+        num_plots (int): number of lines to be drawn on the plot
+        legends (list): list of legend names for lines
+
+    return:
+    -------
+        plot (Plotter): PyQtGraph plot object
     """
-    update_plot_signal = pyqtSignal(float, list)
+    update_plot_signal = pyqtSignal(float, list) # signal that will trigger a plot update
     def __init__(self,
                  title: str,
                  x_label: str,
@@ -42,8 +61,6 @@ class Plotter(pg.PlotWidget):
         self.plot_item.getAxis('bottom').setTextPen('k')
         self.plot_item.getAxis('left').setTextPen('k')
 
-
-
         if legends is not None:
             self.plot_item.addLegend(labelTextColor=plot_black, brush=plot_grey)
 
@@ -58,14 +75,29 @@ class Plotter(pg.PlotWidget):
         self.update_plot_signal.connect(self.update_plot)
 
     def update_plot(self, time: float, new_data:list) -> None:
+        """
+        Adds new data to the plot
+
+        inputs:
+        -------
+            time (float): x-axis value
+            new_data (list): y-axis values for each line to be plotted
+        """
         self.time.append(time) # add time point
 
         for data_set, plot_line, data_point in zip(self.data_sets, self.plot_lines, new_data):
             data_set.append(data_point) # append the data to its corresponding list
-            plot_line.setData(self.time, data_set)
+            plot_line.setData(self.time, data_set) # update the plot
+
+        return None
 
     def reset_plot(self) -> None:
+        """
+        Clears all the plots and erases the sotred data
+        """
         self.time.clear() # clear time list
         for data_set, plot_line in zip(self.data_sets, self.plot_lines):
             data_set.clear()
             plot_line.setData(self.time, data_set)
+
+        return None

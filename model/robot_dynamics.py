@@ -1,3 +1,10 @@
+"""
+Author: Miguel Tamayo
+
+robot_dynamics.py
+Contains class describing the robot's dynamics
+"""
+
 from .states import RobotState, RobotDerivativeState
 from inputs.control_inputs import ControlInputs
 from utilities.constants import *
@@ -5,60 +12,105 @@ from utilities.constants import *
 import numpy as np
 
 class RobotDynamics:
-    def __init__(self, dt=0.01) -> None:
+    """
+    class that hold robot's dynamics
+
+    inputs:
+    -------
+        dt (float): robot's step time
+
+    return:
+    -------
+        dynamics (RobotDynamics): robot's dynamics instance
+    """
+    def __init__(self,
+                 dt: float=0.01) -> None:
+        
         self.state = RobotState()           # initialize current robot state to 0
         self.dot = RobotDerivativeState()   # initialize current robot derivative to 0
         self.dt = dt                        # sampling time
 
     def setState(self, state:RobotState) -> None:
         """
-        @brief          -> sets state to desired state
-        @param state:   -> robot state
+        sets state to desired state
+        
+        inputs:
+        -------
+            state (RobotState): new robot's state
         """
         self.state = state
 
+        return None
+
     def setDotState(self, dot:RobotDerivativeState) -> None:
         """
-        @brief  -> sets derivative state to desired derivative state
-        @param dot  -> robot's derivative state
+        sets derivative state to desired derivative state
+
+        inputs:
+        -------
+            dot (RobotDerivativeState): robot's new derivative state
         """
         self.dot = dot
 
-    def reset(self):
+        return None
+
+    def reset(self) -> None:
         """
-        @brief  -> makes the robot's state and derivative state both zero
+        makes the robot's state and derivative state zero
         """
         self.setState(RobotState()) # reset state
         self.setDotState(RobotDerivativeState()) # reset derivative state
 
+
+        return None
+
+
     def getState(self) -> RobotState:
         """
-        @brief  -> robot's current state getter
-        @return -> robot's state
+        gets the robot's current state
+
+        return:
+        -------
+            state (RobotState): robot's state
         """
         return self.state
     
     def getDotState(self) -> RobotDerivativeState:
         """
-        @brief  -> robot's current derivative state getter
-        @return -> robot's derivative state
+        gets the robot's derivative state
+
+        return:
+        -------
+            derivative (RobotDerivativeState): robot's derivative state
         """
         return self.dot
     
     def update(self, controls: ControlInputs) -> None:
+        """
+        updates the robot's dynamics
+
+        inputs:
+        -------
+            controls (ControlsInputs): robot's inputs
+        """
         self.dot = self.computeDerivative(state=self.state, vl=controls.vl, vr=controls.vr) # calculate new derivative
         self.state = self.integrateState(state=self.state, dot=self.dot) # integrate by dT
         
-        return
+        return None
 
     def computeDerivative(self, state: RobotState, vl: float, vr: float) -> RobotDerivativeState:
         """
-        @brief  -> computes the robot's time-derivative given the linear velocities in the
-                    robot's local frame
-        @param phi  -> robot's heading [rad]
-        @param vl   -> left wheel's linear velocity input [cm/s]
-        @param vr   -> right wheel's linear velocity input [cm/s]
-        @return -> time derivative state
+        computes the robot's time-derivative give the linear velocities in the robot's loca frame
+
+        inputs:
+        -------
+            state (RobotState): robot's current state
+            vl (float): left wheel linear velocity input [m/s]
+            vr (float): right wheel linear velocity input [m/s]
+
+        return:
+        -------
+            dot (RobotDerivativeState): time derivative state
         """
         dot = RobotDerivativeState() # empty state
         v = (vr + vl) / 2. # robot's linear velocity in robot's frame
@@ -73,19 +125,20 @@ class RobotDynamics:
     
     def integrateState(self, state: RobotState, dot: RobotDerivativeState) -> RobotState:
         """
-        @brief -> Integrates the vehicle state using trapezoidal integration
-        @param: dT -> sampling time [s]
-        @param: state -> robot state to integrate
-        @param: dot -> robot derivative state
-        @return: new_state -> new robot state with integrated components
-        """
+        integrates the vehicle state using trapezoidal integration
 
+        inputs:
+        -------
+            state (RobotState): robot state to integrate
+            dot (RobotDerivativeState): robot derivative state
+
+        return:
+        -------
+            new_state (RobotState): new robot state with integrated components
+        """
         new_state = RobotState() # create empty instance
         new_state.px = state.px + dot.vx * self.dt
         new_state.py = state.py + dot.vy * self.dt
         new_state.phi = state.phi + dot.w * self.dt
 
         return new_state
-
-
-

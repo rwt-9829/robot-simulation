@@ -1,5 +1,8 @@
 """
-File that holds all the constants used throughout the simulation
+Author: Miguel Tamayo
+
+constants.py
+Holds all the constants used throughout the simulation
 """
 
 from PyQt5.QtGui import (QColor)
