@@ -21,7 +21,7 @@ m2x = 100 # meter to pixel
 ### ----- Robot Constants ----- ###
 L = .20         # wheel base (distance between both wheels) [m]
 wheel_r = 0.03  # wheel radius [m]
-robot_size = 50. # size of robot sides [px]
+robot_size = 30. # size of robot sides [px]
 
 scaling_unit = 0.25 # determines the relative size of the front tip of the robot
 front_size = robot_size * scaling_unit # size of robot's front tip
