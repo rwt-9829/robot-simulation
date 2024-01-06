@@ -81,6 +81,24 @@ class MainWindow(QMainWindow):
 
         button_widget.setLayout(button_layout)
 
+        ### ----- control sliders ----- ###
+        # create sliders area
+        control_sliders_widget = QWidget()
+        control_sliders_layout = QHBoxLayout()
+
+        # create slider widgets
+        self.vr_slider = Slider(label= "Right Wheel Vel",
+                           min_val=vmin, max_val=vmax,
+                           width=int(canvas_width/3), init_val= 0)
+        self.vl_slider = Slider(label= "Left Wheel Vel",
+                           min_val=vmin, max_val=vmax,
+                           width=int(canvas_width/3), init_val= 0)
+
+        # add the sliders to the slider area
+        control_sliders_layout.addWidget(self.vl_slider)
+        control_sliders_layout.addWidget(self.vr_slider)
+        control_sliders_widget.setLayout(control_sliders_layout)
+
         ### ----- position graphs ----- ###
         # create graph area
         pos_graph_widget = QWidget()
@@ -110,6 +128,7 @@ class MainWindow(QMainWindow):
         # row | column | rowSpan | ColumnSpan
         layout.addWidget(canvas, 0, 0, 2, 1)
         layout.addWidget(button_widget, 2, 0, 1, 1)
+        layout.addWidget(control_sliders_widget, 3, 0, 1, 1)
         layout.addWidget(pos_graph_widget, 0, 1, 1, 1)
         layout.addWidget(vel_graph_widget, 1, 1, 1, 1)
 
@@ -128,7 +147,7 @@ class MainWindow(QMainWindow):
         Internal method called in a thread to handle simulation updates
         """
         self.time += dt # advance time
-        inputs = ControlInputs(vl=0.4, vr=0.5) # create inputs for robot
+        inputs = ControlInputs(vl=self.vl_slider.get_slider_value(), vr=self.vr_slider.get_slider_value()) # create inputs for robot
         self.robot_simulation.takeStep(inputs) # advance robot in time
         
         # update the robot
@@ -180,3 +199,8 @@ class MainWindow(QMainWindow):
         self.y_pos_plot.reset_plot()
         self.x_vel_plot.reset_plot()
         self.y_vel_plot.reset_plot()
+
+        # reset sliders
+        self.vl_slider.reset_slider()
+        self.vr_slider.reset_slider()
+
