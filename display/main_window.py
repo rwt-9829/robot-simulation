@@ -7,7 +7,7 @@ Manages all the widgets on the user interface as well as the functions for inter
 
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton, QGridLayout, QGraphicsView,
-                             QGraphicsScene, QGraphicsLineItem, QHBoxLayout)
+                             QGraphicsScene, QHBoxLayout, QVBoxLayout)
 
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QTimer, QRectF, QRect
 
@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         ### ----- control sliders ----- ###
         # create sliders area
         control_sliders_widget = QWidget()
-        control_sliders_layout = QHBoxLayout()
+        control_sliders_layout = QVBoxLayout()
 
         # create slider widgets
         self.vr_slider = Slider(label= "Right Wheel Vel",
