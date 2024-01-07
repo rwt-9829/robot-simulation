@@ -87,10 +87,10 @@ class MainWindow(QMainWindow):
         control_sliders_layout = QVBoxLayout()
 
         # create slider widgets
-        self.vr_slider = Slider(label= "Right Wheel Vel",
+        self.vr_slider = Slider(label= "Right Wheel Velocity",
                            min_val=vmin, max_val=vmax,
                            width=int(canvas_width/3), init_val= 0)
-        self.vl_slider = Slider(label= "Left Wheel Vel",
+        self.vl_slider = Slider(label= "Left Wheel Velocity",
                            min_val=vmin, max_val=vmax,
                            width=int(canvas_width/3), init_val= 0)
 
