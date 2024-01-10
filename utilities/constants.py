@@ -29,6 +29,9 @@ front_size = robot_size * scaling_unit # size of robot's front tip
 vmax = 1 # wheels max linear velocity [m/s]
 vmin = -vmax 
 
+heading_max = 180
+heading_min = -heading_max
+
 ### ----- Simulation Constants ----- ###
 dt = 0.01 # 10ms timer
 
