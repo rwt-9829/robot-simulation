@@ -7,7 +7,7 @@ Manages all the widgets on the user interface as well as the functions for inter
 
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton, QGridLayout, QGraphicsView,
-                             QGraphicsScene, QGraphicsLineItem, QHBoxLayout)
+                             QGraphicsScene, QGraphicsLineItem, QHBoxLayout, QVBoxLayout)
 
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QTimer, QRectF, QRect
 
@@ -81,6 +81,24 @@ class MainWindow(QMainWindow):
 
         button_widget.setLayout(button_layout)
 
+        ### ----- controls area ----- ###
+        # create sliders area
+        control_sliders_widget = QWidget()
+        control_sliders_layout = QVBoxLayout()
+
+        # create slider widgets
+        self.heading = Slider(label= "Heading",
+                           min_val=vmin, max_val=vmax,
+                           width=int(canvas_width/3), init_val= 0)
+        self.speed = Slider(label= "Linear Speed",
+                           min_val=heading_min, max_val=heading_max,
+                           width=int(canvas_width/3), init_val= 0)
+
+        # add the sliders to the slider area
+        control_sliders_layout.addWidget(self.heading)
+        control_sliders_layout.addWidget(self.speed)
+        control_sliders_widget.setLayout(control_sliders_layout)
+
         ### ----- position graphs ----- ###
         # create graph area
         pos_graph_widget = QWidget()
@@ -110,6 +128,7 @@ class MainWindow(QMainWindow):
         # row | column | rowSpan | ColumnSpan
         layout.addWidget(canvas, 0, 0, 2, 1)
         layout.addWidget(button_widget, 2, 0, 1, 1)
+        layout.addWidget(control_sliders_widget, 3, 0, 1, 1)
         layout.addWidget(pos_graph_widget, 0, 1, 1, 1)
         layout.addWidget(vel_graph_widget, 1, 1, 1, 1)
 
