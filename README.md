@@ -27,4 +27,4 @@ In order to run the simulation you need to install PyQt5 and PyQtGraph. After, f
 Currently working on a controller for autonomous driving
 
 ## What I've Learned
-* Wheeled robot dynamics
+* Wheeled robot kinematics
