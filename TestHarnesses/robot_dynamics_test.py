@@ -7,15 +7,15 @@ File tests the functions that describe the dynamics of the robot
 import sys
 sys.path.append("..")
 
-from model.robot_dynamics   import RobotDynamics
+from model.robot_kinematics   import RobotKinematics
 from inputs.control_inputs  import ControlInputs
 from model.states           import RobotState, RobotDerivativeState
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-dynamics = RobotDynamics()
-expected = RobotDynamics()
+dynamics = RobotKinematics()
+expected = RobotKinematics()
 
 ### Testing derivative states ###
 inputs = ControlInputs(10, 10)
