@@ -5,7 +5,7 @@ robot_simulate.py
 Handles all aspects of the robot's simulation such as updating its position
 """
 
-from model.robot_dynamics import RobotDynamics
+from model.robot_kinematics import RobotKinematics
 from model.states import RobotState, RobotDerivativeState
 from inputs.control_inputs import ControlInputs
 from utilities.constants import *
@@ -21,7 +21,7 @@ class RobotSimulate:
     def __init__(self) -> None:
         self.dt = dt # time steps
         self.time = 0. # initialize simulation time to 0
-        self.robot_model = RobotDynamics(dt=self.dt)
+        self.robot_model = RobotKinematics(dt=self.dt)
 
     def getVehicleState(self) -> RobotState:
         """

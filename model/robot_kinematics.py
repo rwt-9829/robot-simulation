@@ -11,7 +11,7 @@ from utilities.constants import *
 
 import numpy as np
 
-class RobotDynamics:
+class RobotKinematics:
     """
     class that hold robot's dynamics
 
@@ -21,7 +21,7 @@ class RobotDynamics:
 
     return:
     -------
-        dynamics (RobotDynamics): robot's dynamics instance
+        dynamics (RobotKinematics): robot's dynamics instance
     """
     def __init__(self,
                  dt: float=0.01) -> None:
