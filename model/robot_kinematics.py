@@ -13,7 +13,7 @@ import numpy as np
 
 class RobotKinematics:
     """
-    class that hold robot's dynamics
+    class that hold robot's kinematics model
 
     inputs:
     -------
@@ -21,7 +21,7 @@ class RobotKinematics:
 
     return:
     -------
-        dynamics (RobotKinematics): robot's dynamics instance
+        kinematics (RobotKinematics): robot's kinematics instance
     """
     def __init__(self,
                  dt: float=0.01) -> None:
