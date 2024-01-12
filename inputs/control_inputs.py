@@ -2,13 +2,12 @@
 Author: Miguel Tamayo
 
 control_inputs.py
-Contains the control input variables that are used to control the robot.
-Control inputs are defined in the robot's moving frame
+Contains different classes that are used to control the robot
 """
 
-class ControlInputs:
+class WheelLinearInputs:
     """
-    controls inputs consist of left and right wheels to drive the robot
+    Left and right wheel linear velocities in the local frame
 
     inputs:
     -------
@@ -17,7 +16,7 @@ class ControlInputs:
 
     return:
     -------
-        inputs (ControlInputs): robot's inputs
+        inputs (WheelLinearInputs): robot's inputs
     """
     def __init__(self,
                  vl: float,

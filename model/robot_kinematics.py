@@ -6,7 +6,7 @@ Contains class describing the robot's dynamics
 """
 
 from .states import RobotState, RobotDerivativeState
-from inputs.control_inputs import ControlInputs
+from inputs.control_inputs import WheelLinearInputs
 from utilities.constants import *
 
 import numpy as np
@@ -85,7 +85,7 @@ class RobotKinematics:
         """
         return self.dot
     
-    def update(self, controls: ControlInputs) -> None:
+    def update(self, controls: WheelLinearInputs) -> None:
         """
         updates the robot's dynamics
 

@@ -7,7 +7,7 @@ Handles all aspects of the robot's simulation such as updating its position
 
 from model.robot_kinematics import RobotKinematics
 from model.states import RobotState, RobotDerivativeState
-from inputs.control_inputs import ControlInputs
+from inputs.control_inputs import WheelLinearInputs
 from utilities.constants import *
 
 class RobotSimulate:
@@ -43,13 +43,13 @@ class RobotSimulate:
         """
         return self.robot_model.getDotState()
     
-    def takeStep(self, controls: ControlInputs) -> None:
+    def takeStep(self, controls: WheelLinearInputs) -> None:
         """
         advances the robot (through its dynamics) in time
 
         inputs:
         -------
-            controls (ControlInputs): robot's left and rigth wheel velocities
+            controls (WheelLinearInputs): robot's left and rigth wheel velocities
         """
         self.time += self.dt # step in time
         self.robot_model.update(controls) # update robot state

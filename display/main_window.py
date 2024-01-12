@@ -18,7 +18,7 @@ from .plotter import Plotter
 from .slider import Slider
 from .button import Button
 from .robot_simulate import RobotSimulate
-from inputs.control_inputs import ControlInputs
+from inputs.control_inputs import WheelLinearInputs
 from utilities.constants import *
 
 from PyQt5.QtWidgets import QWidget
@@ -128,7 +128,7 @@ class MainWindow(QMainWindow):
         Internal method called in a thread to handle simulation updates
         """
         self.time += dt # advance time
-        inputs = ControlInputs(vl=0.4, vr=0.5) # create inputs for robot
+        inputs = WheelLinearInputs(vl=0.4, vr=0.5) # create inputs for robot
         self.robot_simulation.takeStep(inputs) # advance robot in time
         
         # update the robot
