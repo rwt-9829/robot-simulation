@@ -28,6 +28,7 @@ class RobotKinematics:
         
         self.state = RobotState()           # initialize current robot state to 0
         self.dot = RobotDerivativeState()   # initialize current robot derivative to 0
+        self.local_dot = RobotDerivativeState() # derivative state to keep track of local vx, vy
         self.dt = dt                        # sampling time
 
     def setState(self, state:RobotState) -> None:
@@ -85,6 +86,16 @@ class RobotKinematics:
         """
         return self.dot
     
+    def getWheelVelocities(self) -> RobotDerivativeState:
+        """
+        gets the robot's left and right wheel velocities
+
+        return:
+        -------
+            velocities (RobotDerivativeState): robot's left and right wheel velocities
+        """
+        return self.local_dot
+    
     def update(self, controls: WheelLinearInputs) -> None:
         """
         updates the robot's dynamics
@@ -93,6 +104,11 @@ class RobotKinematics:
         -------
             controls (ControlsInputs): robot's inputs
         """
+        # kinda weird but I don't want to make a whole new class
+        # vx maps to left whele vy to right
+        self.local_dot.vx = controls.vl
+        self.local_dot.vy = controls.vr
+
         self.dot = self.computeDerivative(state=self.state, vl=controls.vl, vr=controls.vr) # calculate new derivative
         self.state = self.integrateState(state=self.state, dot=self.dot) # integrate by dT
         

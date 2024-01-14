@@ -22,26 +22,6 @@ class RobotSimulate:
         self.dt = dt # time steps
         self.time = 0. # initialize simulation time to 0
         self.robot_model = RobotKinematics(dt=self.dt)
-
-    def getVehicleState(self) -> RobotState:
-        """
-        gets the robot's state
-
-        return:
-        -------
-            state (RobotState): robot's state
-        """
-        return self.robot_model.getState()
-
-    def getVehicleDotState(self) -> RobotDerivativeState:
-        """
-        gets the robot's derivative state
-        
-        return:
-        -------
-            dot state (RobotDerivativeState): robot's derivative state
-        """
-        return self.robot_model.getDotState()
     
     def takeStep(self, controls: WheelLinearInputs) -> None:
         """

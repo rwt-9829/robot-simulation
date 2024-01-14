@@ -46,7 +46,7 @@ class Plotter(pg.PlotWidget):
 
         # figure attributes
         self.setBackground(plot_white)
-        self.setFixedSize(350, 350)
+        self.setFixedSize(275, 350)
         
         # plot attributes 
         self.plot_item = self.getPlotItem()
