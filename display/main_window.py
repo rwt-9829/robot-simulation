@@ -18,7 +18,7 @@ from .plotter import Plotter
 from .slider import Slider
 from .button import Button
 from .robot_simulate import RobotSimulate
-from inputs.control_inputs import ControlInputs
+from inputs.control_inputs import WheelLinearInputs
 from utilities.constants import *
 
 from PyQt5.QtWidgets import QWidget
@@ -101,36 +101,38 @@ class MainWindow(QMainWindow):
 
         ### ----- position graphs ----- ###
         # create graph area
-        pos_graph_widget = QWidget()
-        pos_graph_layout = QHBoxLayout()
+        state_graph_widget = QWidget()
+        state_graph_layout = QHBoxLayout()
 
         # create graph objects
         self.x_pos_plot = Plotter(title= "x-axis position", x_label="time (s)", y_label="position (m)")
         self.y_pos_plot = Plotter(title="y-axis position", x_label="time (s)", y_label="position (m)")
+        self.phi_plot = Plotter(title="heading", x_label="time (s)", y_label="heading (deg)")
 
         # add the grapsh to the graph area
-        pos_graph_layout.addWidget(self.x_pos_plot)
-        pos_graph_layout.addWidget(self.y_pos_plot)
-        pos_graph_widget.setLayout(pos_graph_layout)
+        state_graph_layout.addWidget(self.x_pos_plot)
+        state_graph_layout.addWidget(self.y_pos_plot)
+        state_graph_layout.addWidget(self.phi_plot)
+        state_graph_widget.setLayout(state_graph_layout)
 
         ### ----- velocity graphs ----- ###
         vel_graph_widget = QWidget()
         vel_graph_layout = QHBoxLayout()
 
-        self.x_vel_plot = Plotter(title="x-axis velocity", x_label="time (s)", y_label="velocity (m/s)")
-        self.y_vel_plot = Plotter(title="y-axis velocity", x_label="time (s)", y_label="velocity (m/s)")
+        self.vl_plot = Plotter(title="left wheel linear vel", x_label="time (s)", y_label="velocity (m/s)")
+        self.vr_plot = Plotter(title="right wheel linear vel", x_label="time (s)", y_label="velocity (m/s)")
 
-        vel_graph_layout.addWidget(self.x_vel_plot)
-        vel_graph_layout.addWidget(self.y_vel_plot)
+        vel_graph_layout.addWidget(self.vl_plot)
+        vel_graph_layout.addWidget(self.vr_plot)
         vel_graph_widget.setLayout(vel_graph_layout)
         
         ### ----- Add widgets to the main layout ----- ###
         # row | column | rowSpan | ColumnSpan
         layout.addWidget(canvas, 0, 0, 2, 1)
         layout.addWidget(button_widget, 2, 0, 1, 1)
+        layout.addWidget(state_graph_widget, 0, 1, 1, 1)
         layout.addWidget(control_sliders_widget, 3, 0, 1, 1)
-        layout.addWidget(pos_graph_widget, 0, 1, 1, 1)
-        layout.addWidget(vel_graph_widget, 1, 1, 1, 1)
+        # layout.addWidget(vel_graph_widget, 1, 1, 1, 1)
 
         layout.setSpacing(0)
         layout.setRowStretch(3, 2)
@@ -141,25 +143,28 @@ class MainWindow(QMainWindow):
         self.simulationTimedThread = QTimer()
         self.simulationTimedThread.timeout.connect(self.runSimulation)
         self.time = 0.0
+        self.timerTicks = 0
 
     def runSimulation(self):
         """
         Internal method called in a thread to handle simulation updates
         """
         self.time += dt # advance time
-        inputs = ControlInputs(vl=self.vl_slider.get_slider_value(), vr=self.vr_slider.get_slider_value()) # create inputs for robot
+        inputs = WheelLinearInputs(vl=self.vl_slider.get_slider_value(), vr=self.vr_slider.get_slider_value()) # create inputs for robot
         self.robot_simulation.takeStep(inputs) # advance robot in time
         
         # update the robot
-        robot_state = self.robot_simulation.getVehicleState()
-        robot_dot = self.robot_simulation.getVehicleDotState()
+        robot_state = self.robot_simulation.robot_model.getState()
+        wheel_velocities = self.robot_simulation.robot_model.getWheelVelocities()
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
 
         # update plots
-        self.x_pos_plot.update_plot_signal.emit(self.time, [robot_state.px])
-        self.y_pos_plot.update_plot_signal.emit(self.time, [robot_state.py])
-        self.x_vel_plot.update_plot_signal.emit(self.time, [robot_dot.vx])
-        self.y_vel_plot.update_plot_signal.emit(self.time, [robot_dot.vy])
+        if self.timerTicks % plotUpdateTicks == 0:
+            self.x_pos_plot.update_plot_signal.emit(self.time, [robot_state.px])
+            self.y_pos_plot.update_plot_signal.emit(self.time, [robot_state.py])
+            self.phi_plot.update_plot_signal.emit(self.time, [np.rad2deg(robot_state.phi)])
+        #     self.vl_plot.update_plot_signal.emit(self.time, [wheel_velocities.vx])
+        #     self.vr_plot.update_plot_signal.emit(self.time, [wheel_velocities.vy])
 
     def playSimulation(self):
         """
@@ -185,11 +190,11 @@ class MainWindow(QMainWindow):
         """
         self.pauseSimulation() # pause the simulation
 
-        self.time = 0 # reset the simulation time
+        self.time = 0. # reset the simulation time
 
         # reset the robot drawing
         self.robot_simulation.reset()
-        robot_state = self.robot_simulation.getVehicleState()
+        robot_state = self.robot_simulation.robot_model.getState()
         self.scene.removeItem(self.robot)
         self.scene.addItem(self.robot)
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
@@ -197,8 +202,9 @@ class MainWindow(QMainWindow):
         # reset the plots
         self.x_pos_plot.reset_plot()
         self.y_pos_plot.reset_plot()
-        self.x_vel_plot.reset_plot()
-        self.y_vel_plot.reset_plot()
+        self.phi_plot.reset_plot()
+        self.vl_plot.reset_plot()
+        self.vr_plot.reset_plot()
 
         # reset sliders
         self.vl_slider.reset_slider()

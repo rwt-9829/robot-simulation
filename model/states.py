@@ -53,12 +53,10 @@ class RobotDerivativeState:
         derivative (RobotDerivativeState): robot's derivative instance
     """
     def __init__(self,
-                 local_v: float = 0.0,
                  vx: float = 0.0,
                  vy: float = 0.0,
                  r_rate: float = 0.0) -> None:
         # derivative state vector
-        self.local_v = local_v
         self.vx = vx
         self.vy = vy
         self.w = r_rate

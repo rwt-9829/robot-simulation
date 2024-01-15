@@ -5,9 +5,9 @@ robot_simulate.py
 Handles all aspects of the robot's simulation such as updating its position
 """
 
-from model.robot_dynamics import RobotDynamics
+from model.robot_kinematics import RobotKinematics
 from model.states import RobotState, RobotDerivativeState
-from inputs.control_inputs import ControlInputs
+from inputs.control_inputs import WheelLinearInputs
 from utilities.constants import *
 
 class RobotSimulate:
@@ -21,35 +21,15 @@ class RobotSimulate:
     def __init__(self) -> None:
         self.dt = dt # time steps
         self.time = 0. # initialize simulation time to 0
-        self.robot_model = RobotDynamics(dt=self.dt)
-
-    def getVehicleState(self) -> RobotState:
-        """
-        gets the robot's state
-
-        return:
-        -------
-            state (RobotState): robot's state
-        """
-        return self.robot_model.getState()
-
-    def getVehicleDotState(self) -> RobotDerivativeState:
-        """
-        gets the robot's derivative state
-        
-        return:
-        -------
-            dot state (RobotDerivativeState): robot's derivative state
-        """
-        return self.robot_model.getDotState()
+        self.robot_model = RobotKinematics(dt=self.dt)
     
-    def takeStep(self, controls: ControlInputs) -> None:
+    def takeStep(self, controls: WheelLinearInputs) -> None:
         """
         advances the robot (through its dynamics) in time
 
         inputs:
         -------
-            controls (ControlInputs): robot's left and rigth wheel velocities
+            controls (WheelLinearInputs): robot's left and rigth wheel velocities
         """
         self.time += self.dt # step in time
         self.robot_model.update(controls) # update robot state
