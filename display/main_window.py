@@ -175,7 +175,7 @@ class MainWindow(QMainWindow):
         self.pauseSimulation() # pause the simulation
 
         self.robot_sim.reset() # reset robot simulation object
-        robot_state = self.robot_simulation.robot_model.getState()
+        robot_state = self.robot_sim.robot_model.getState()
         self.scene.removeItem(self.robot)
         self.scene.addItem(self.robot)
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
