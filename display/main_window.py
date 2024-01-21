@@ -32,9 +32,7 @@ class MainWindow(QMainWindow):
     """
     def __init__(self) -> None:
         super().__init__()
-        self.robot_simulation = RobotSimulate() # create an instance of the robot's simulation
         self.setWindowTitle("Robot Simulation")
-
         self.simulationPaused = True # begin with a paused simulation
 
         ### ----- pyqt5 application window ----- ###
