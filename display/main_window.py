@@ -6,19 +6,18 @@ Manages all the widgets on the user interface as well as the functions for inter
 """
 
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton, QGridLayout, QGraphicsView,
-                             QGraphicsScene, QGraphicsLineItem, QHBoxLayout)
+from PyQt5.QtWidgets import (QMainWindow, QWidget, QGridLayout, QGraphicsView,
+                             QGraphicsScene, QHBoxLayout)
 
-from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QTimer, QRectF, QRect
+from PyQt5.QtCore import QThread, QMetaObject
 
 import numpy as np
 
 from .robot_display import RobotDisplay
 from .plotter import Plotter
-from .slider import Slider
 from .button import Button
-from .robot_simulate import RobotSimulate
-from inputs.control_inputs import WheelLinearInputs
+from model.states import RobotState, RobotDerivativeState
+from .robot_simulate import RobotSimulate, RobotSimulate1
 from utilities.constants import *
 
 from PyQt5.QtWidgets import QWidget
@@ -119,51 +118,57 @@ class MainWindow(QMainWindow):
         layout.setRowStretch(3, 2)
         mainWdiget.setLayout(layout)
 
-        ### ----- Simulation Timer ----- ###
-        # internal timer that advances simulation on every tick
-        self.simulationTimedThread = QTimer()
-        self.simulationTimedThread.timeout.connect(self.runSimulation)
-        self.time = 0.0
-        self.timerTicks = 0
+        ### ----- Simulation Thread ----- ###
+        self.sim_thread = QThread() # create thread for simulation
+        self.robot_sim = RobotSimulate1() # create simulation object
+        self.robot_sim.moveToThread(self.sim_thread) # move object into thread
 
-    def runSimulation(self):
+        # connect thread signals
+        self.sim_thread.started.connect(self.robot_sim.start_signal.emit)
+        self.sim_thread.finished.connect(self.robot_sim.stop_signal.emit)
+        self.robot_sim.finished_signal.connect(self.updateGUI)
+        self.robot_sim.update_plots_signal.connect(self.updatePlots)
+
+    def updateGUI(self, robot_state: RobotState) -> None:
         """
-        Internal method called in a thread to handle simulation updates
+        Updates the canvas and graphs
         """
-        self.time += dt # advance time
-        inputs = WheelLinearInputs(vl=0.4, vr=0.5) # create inputs for robot
-        self.robot_simulation.takeStep(inputs) # advance robot in time
-        
-        # update the robot
-        robot_state = self.robot_simulation.robot_model.getState()
-        wheel_velocities = self.robot_simulation.robot_model.getWheelVelocities()
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
 
-        # update plots
-        if self.timerTicks % plotUpdateTicks == 0:
-            self.x_pos_plot.update_plot_signal.emit(self.time, [robot_state.px])
-            self.y_pos_plot.update_plot_signal.emit(self.time, [robot_state.py])
-            self.phi_plot.update_plot_signal.emit(self.time, [np.rad2deg(robot_state.phi)])
-            # self.vl_plot.update_plot_signal.emit(self.time, [wheel_velocities.vx])
-            # self.vr_plot.update_plot_signal.emit(self.time, [wheel_velocities.vy])
+    def updatePlots(self, time: float, state: RobotState, wheel_vel: RobotDerivativeState) -> None:
+        """
+        Updates GUI graphs
+        """
+        self.x_pos_plot.update_plot_signal.emit(time, [state.px])
+        self.y_pos_plot.update_plot_signal.emit(time, [state.py])
+        self.phi_plot.update_plot_signal.emit(time, [np.rad2deg(state.phi)])
+
+        self.vl_plot.update_plot_signal.emit(time, [wheel_vel.vx])
+        self.vr_plot.update_plot_signal.emit(time, [wheel_vel.vy])
 
     def playSimulation(self):
         """
         Starts simulation if currently stopped
         """
+        # start thread
+        self.sim_thread.start()
+
+        # update button statuses
         self.play_button.setDisabled(True)
         self.pause_button.setDisabled(False)
         self.simulationPaused = False
-        self.simulationTimedThread.start(10) # start timer at dt (10ms)
 
     def pauseSimulation(self):
         """
         Pauses simulation if currently playing
         """
+        self.sim_thread.quit() # stop the thread
+
+        # update the button statues
         self.play_button.setDisabled(False)
         self.pause_button.setDisabled(True)
+
         self.simulationPaused = True
-        self.simulationTimedThread.stop()
 
     def resetSimulation(self):
         """
@@ -171,10 +176,7 @@ class MainWindow(QMainWindow):
         """
         self.pauseSimulation() # pause the simulation
 
-        self.time = 0. # reset the simulation time
-
-        # reset the robot drawing
-        self.robot_simulation.reset()
+        self.robot_sim.reset() # reset robot simulation object
         robot_state = self.robot_simulation.robot_model.getState()
         self.scene.removeItem(self.robot)
         self.scene.addItem(self.robot)
