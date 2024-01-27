@@ -14,6 +14,7 @@ from PyQt5.QtCore import QThread, QMetaObject
 import numpy as np
 
 from .robot_display import RobotDisplay
+from .path import Path
 from .plotter import Plotter
 from .button import Button
 from model.states import RobotState, RobotDerivativeState
@@ -32,9 +33,7 @@ class MainWindow(QMainWindow):
     """
     def __init__(self) -> None:
         super().__init__()
-        self.robot_simulation = RobotSimulate() # create an instance of the robot's simulation
         self.setWindowTitle("Robot Simulation")
-
         self.simulationPaused = True # begin with a paused simulation
 
         ### ----- pyqt5 application window ----- ###
@@ -53,8 +52,13 @@ class MainWindow(QMainWindow):
         # create scene to handle robot item
         self.scene = QGraphicsScene(canvas)
         self.scene.setBackgroundBrush(background_color)
+
         self.robot = RobotDisplay() # create robot instance at the origin facing x+
-        self.scene.addItem(self.robot) # add the robot to the scene
+        self.robot_path = Path(line_color, 1.5) # path to follow robot's position
+
+        # add robot and path to the scene
+        self.scene.addItem(self.robot)
+        self.scene.addItem(self.robot_path)
 
         canvas.setScene(self.scene) # add the scene to the canvas
 
@@ -133,6 +137,7 @@ class MainWindow(QMainWindow):
         """
         Updates the canvas and graphs
         """
+        self.robot_path.updatePath(robot_state.px, robot_state.py)
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
 
     def updatePlots(self, time: float, state: RobotState, wheel_vel: RobotDerivativeState) -> None:
@@ -176,11 +181,15 @@ class MainWindow(QMainWindow):
         """
         self.pauseSimulation() # pause the simulation
 
-        self.robot_sim.reset() # reset robot simulation object
-        robot_state = self.robot_simulation.robot_model.getState()
+        # reset robot object
+        self.robot_sim.reset()
+        robot_state = self.robot_sim.robot_model.getState()
         self.scene.removeItem(self.robot)
         self.scene.addItem(self.robot)
         self.robot.updatePosition(robot_state.px, robot_state.py, robot_state.phi)
+
+        # reset path object
+        self.robot_path.clear_path()
 
         # reset the plots
         self.x_pos_plot.reset_plot()
