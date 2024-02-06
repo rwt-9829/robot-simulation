@@ -57,8 +57,8 @@ class MainWindow(QMainWindow):
         self.robot_path = Path(line_color, 1.5) # path to follow robot's position
 
         # add robot and path to the scene
-        self.scene.addItem(self.robot_path)
         self.scene.addItem(self.robot)
+        self.scene.addItem(self.robot_path)
 
         canvas.setScene(self.scene) # add the scene to the canvas
 
