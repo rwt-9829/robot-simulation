@@ -49,4 +49,5 @@ slider_width = int(canvas_width / 2.5)
 ### ------ Colors ----- ###
 background_color = QColor(57, 57, 57)
 robot_color = QColor(161, 217, 139)
+line_color = QColor(203, 209, 203)
 

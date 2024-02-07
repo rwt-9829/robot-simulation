@@ -12,13 +12,11 @@ from PyQt5.QtWidgets import (QGraphicsItem)
 from PyQt5.QtCore import (Qt, QPoint, QPointF, QRectF)
 
 from PyQt5.QtGui import (QPainter, QColor, QPen, QPolygon, QBrush, QPolygonF, QTransform)
-import pyqtgraph
 
 import numpy as np
 
 from utilities.constants import *
-from utilities.rotations import Cartesian2Pixel
-import time
+from utilities.rotations import *
 
 meters_to_pixel = 1
 
@@ -49,33 +47,19 @@ class RobotDisplay(QGraphicsItem):
         self.heading = origin_phi # robot's heading [rad]
         self.robot = QPolygonF()
 
+        # vehicle vertices
+        # defined with vehicle facing +x
+        #|---\
+        #|---/
+        # [x, y] points
+        self.vertices = [[-robot_size/2, robot_size/2], # top left
+                         [robot_size/2, robot_size/2],  # top right
+                         [robot_size/2 + front_size, 0], # front
+                         [robot_size/2, -robot_size/2], # bottom right
+                         [-robot_size/2, -robot_size/2]] # bottom left
+
         # robot item with initial vertix locations. This will be updated throughout the simulation
         self.updatePosition(self.x_pos, self.y_pos, self.heading)
-
-    def updateRobot(self):
-        """
-        uUpdate self.robot object with new vertices given new self.x and self.y position
-        robot's initial heading is facing towards x+ heading is positive counter-clockwise
-        
-        1. create vertices with heading rotation at the origin of the canvas
-        2. translate the robot drawing to the desired position
-        """
-        # rotate the heading to the graphics frame
-        self.heading = -self.heading
-        # top left point
-        point1 = QPointF((-robot_size/2)*np.cos(self.heading) - (-robot_size/2)*np.sin(self.heading) + self.x_pos,
-                         (-robot_size/2)*np.sin(self.heading) + (-robot_size/2)*np.cos(self.heading) + self.y_pos)
-        point2 = QPointF((robot_size/2)*np.cos(self.heading) - (-robot_size/2)*np.sin(self.heading) + self.x_pos,
-                         (robot_size/2)*np.sin(self.heading) + (-robot_size/2)*np.cos(self.heading) + self.y_pos)
-        point3 = QPointF((robot_size/2 + front_size)*np.cos(self.heading) - np.sin(self.heading) + self.x_pos,
-                         (robot_size/2 + front_size)*np.sin(self.heading) + np.cos(self.heading) + self.y_pos)
-        point4 = QPointF((robot_size/2)*np.cos(self.heading) - (robot_size/2)*np.sin(self.heading) + self.x_pos,
-                         (robot_size/2)*np.sin(self.heading) + (robot_size/2)*np.cos(self.heading) + self.y_pos)
-        point5 = QPointF((-robot_size/2)*np.cos(self.heading) - (robot_size/2)*np.sin(self.heading) + self.x_pos,
-                         (-robot_size/2)*np.sin(self.heading) + (robot_size/2)*np.cos(self.heading) + self.y_pos)
-        
-        self.robot = QPolygonF([point1, point2, point3, point4, point5])
-        self.update()
 
     def boundingRect(self) -> QRectF:
         """
@@ -108,18 +92,22 @@ class RobotDisplay(QGraphicsItem):
 
         inputs:
         -------
-            x: new x position
-            y: new y position
-            phi: new heading
+            x (float): cartesian x offset
+            y (float): cartesian y offset
+            phi (float): heading
         """
-        # update the position coordinates and heading
-        self.x_pos, self.y_pos = Cartesian2Pixel(x, y)
 
-        # multiply to convert meters to our pixel ratio
-        self.x_pos = self.x_pos * m2x 
-        self.y_pos = self.y_pos * m2x
-        self.heading = phi
+        new_points = self.vertices # get the vertices at the origin
+        rot_matrix = rotation_matrix(phi= phi)
 
-        self.updateRobot() # update robot's position
+        # rotate and offset vertices
+        new_points = np.matmul(new_points, rot_matrix)
+        new_points = offset(new_points, x * m2x, y * m2x)
+
+        # offset vertices
+        new_points = Cartesian2Pixel(new_points)
+
+        self.robot = QPolygonF([QPointF(point[0], point[1]) for point in new_points]) # create new robot object
+        self.update()
         
         return None
