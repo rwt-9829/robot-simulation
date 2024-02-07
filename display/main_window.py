@@ -86,6 +86,7 @@ class MainWindow(QMainWindow):
         button_widget.setLayout(button_layout)
 
         ### ----- control sliders ----- ###
+        sliders = {} # dictionary to keep track of sliders and their values
         # create sliders area
         control_sliders_widget = QWidget()
         control_sliders_layout = QVBoxLayout()
@@ -136,7 +137,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(button_widget, 2, 0, 1, 1)
         layout.addWidget(state_graph_widget, 0, 1, 1, 1)
         layout.addWidget(control_sliders_widget, 3, 0, 1, 1)
-        # layout.addWidget(vel_graph_widget, 1, 1, 1, 1)
+        layout.addWidget(vel_graph_widget, 1, 1, 1, 1)
 
         layout.setSpacing(0)
         layout.setRowStretch(3, 2)
