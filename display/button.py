@@ -8,6 +8,7 @@ Contains class for PyQt5 button widget
 import typing
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QSlider, QVBoxLayout, QPushButton
+from PyQt5.QtGui import QFont
 
 class Button(QPushButton):
     """
@@ -30,6 +31,9 @@ class Button(QPushButton):
 
         self.setFixedWidth(width) # set the width of the button
         self.setText(txt) # set the text displayed on the button
+        font = QFont()
+        font.setPointSize(12)
+        self.setFont(font)
         self.clicked.connect(self.button_clicked) # connect the button to a function
 
     def button_clicked(self) -> None:

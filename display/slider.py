@@ -8,6 +8,7 @@ Contains class for PyQt5 slider widget
 import typing
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget, QSlider, QHBoxLayout, QLabel
+from PyQt5.QtGui import QFont
 
 class Slider(QWidget):
     """
@@ -42,10 +43,16 @@ class Slider(QWidget):
         self.ratio = (max_val - min_val) / (self.internal_max - self.internal_min)
         self.value = init_val
 
+        font = QFont()
+        font.setPointSize(12)
+
         layout = QHBoxLayout() # want a horizontal layout
 
         label = QLabel(label) # slider's label
+        label.setFont(font)
+
         self.value_txt = QLabel(f"{init_val}") # slider's value
+        self.value_txt.setFont(font)
 
         # slider and alider attributes
         self.slider = QSlider()
