@@ -18,6 +18,10 @@ class RobotSimulate1(QObject):
     stop_signal = pyqtSignal() # signal to stop the internal timer
     start_signal = pyqtSignal() # signal to start the internal timer
 
+    # signals to notify when sliders have changed
+    vr_slider_signal = pyqtSignal(float)
+    vl_slider_signal = pyqtSignal(float)
+
     # sends parameters necessary to update the plots
     update_plots_signal = pyqtSignal(float, RobotState, RobotDerivativeState)
 
@@ -35,7 +39,31 @@ class RobotSimulate1(QObject):
         # connect the signals to start and stop the simulation
         self.start_signal.connect(self.run)
         self.stop_signal.connect(self.stop)
-        
+
+        self.vl = 0.0
+        self.vr = 0.0
+        self.vl_slider_signal.connect(self.updateVLValue)
+        self.vr_slider_signal.connect(self.updateVRValue)
+
+    def updateVRValue(self, new_value: float) -> None:
+        """
+        updates the right linear wheel velocity
+
+        inputs:
+        -------
+            new_value (float): new right velocity
+        """
+        self.vr = new_value
+    
+    def updateVLValue(self, new_value: float) -> None:
+        """
+        updated the left linear wheel velocity
+
+        inputs:
+        -------
+            new_value (float): new left velocity
+        """
+        self.vl = new_value
 
     def run(self) -> None:
         """
@@ -55,7 +83,7 @@ class RobotSimulate1(QObject):
         """
         self.ticks += 1
         self.time += self.dt # step in time
-        inputs = WheelLinearInputs(vl=0.4, vr=0.5)
+        inputs = WheelLinearInputs(vl=self.vl, vr=self.vr)
         self.robot_model.update(inputs) # update robot state
 
         self.finished_signal.emit(self.robot_model.getState()) # emit a signal to tell we're done

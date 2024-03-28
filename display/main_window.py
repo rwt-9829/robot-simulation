@@ -154,6 +154,9 @@ class MainWindow(QMainWindow):
         self.robot_sim.finished_signal.connect(self.updateGUI)
         self.robot_sim.update_plots_signal.connect(self.updatePlots)
 
+        self.vl_slider.valueChangedSignal.connect(self.robot_sim.vl_slider_signal.emit)
+        self.vr_slider.valueChangedSignal.connect(self.robot_sim.vr_slider_signal.emit)
+
     def updateGUI(self, robot_state: RobotState) -> None:
         """
         Updates the canvas and graphs

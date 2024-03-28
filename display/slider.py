@@ -27,7 +27,7 @@ class Slider(QWidget):
     -------
         slider (Slider): PyQt5 slider widget
     """
-    valueChangedSignal = pyqtSignal()
+    valueChangedSignal = pyqtSignal(float)
     internal_max = 100
     internal_min = -100
     def __init__(self,
@@ -81,7 +81,7 @@ class Slider(QWidget):
         mapped_value = float(value) * self.ratio
         self.value = mapped_value
         self.value_txt.setText("{:.2f}".format(mapped_value))
-        self.valueChangedSignal.emit()
+        self.valueChangedSignal.emit(self.value)
 
     def reset_slider(self) -> None:
         """
