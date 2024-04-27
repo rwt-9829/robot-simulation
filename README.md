@@ -20,11 +20,12 @@ In order to run the simulation you need to install PyQt5 and PyQtGraph. After, f
 2. There are currently 2 branches:
 
    1.`main`: This is used as a testing branch. When play is pressed, the robot will go in a circle
-    2. `manual_drive`: This branch allows your to directly input left and right wheel linear velocities and see how the robot steers.
+
+   2. `manual_drive`: This branch allows you to directly input left and right wheel linear velocities and see how the robot steers.
 
 
 ## Next Step
-Currently working on a controller for autonomous driving
+Currently working on a heading controller for the robot. I'm also converting the code to C++
 
 ## What I've Learned
 * Wheeled robot kinematics
