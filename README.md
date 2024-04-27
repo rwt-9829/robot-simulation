@@ -25,7 +25,9 @@ In order to run the simulation you need to install PyQt5 and PyQtGraph. After, f
 
 
 ## Next Step
-Currently working on a heading controller for the robot. I'm also converting the code to C++
+- [ ] Implement heading controller
+- [ ] Covert main and manual drive to C++ with windows executable capabilities
+- [ ] Wrap heading values to [0 360]
 
 ## What I've Learned
 * Wheeled robot kinematics
