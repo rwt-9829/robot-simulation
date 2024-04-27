@@ -2,6 +2,8 @@
 ## Description
 This project aims to simulate a [differential drive robot](https://en.wikipedia.org/wiki/Differential_wheeled_robot) by implementing the kinematics of the vehicle
 on a virtual environment.
+<img src="https://github.com/miguel-a-tamayo/robot-simulation/assets/83749938/e8be74a1-4ef6-4064-8db3-7247d6e39a29" width="700" height="450">
+
 
 ## Motivation
 Even though my background is in Computer Engineering, I enjoy learning about physical machines like robots. I wanted to learn how robots move and insteract with the world
