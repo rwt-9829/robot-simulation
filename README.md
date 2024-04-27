@@ -1,6 +1,6 @@
 # 2D Wheeled Robot Dynamics Simulation
 ## Description
-This project aims to simulate a [differential drive robot](https://en.wikipedia.org/wiki/Differential_wheeled_robot) by implementing the dynamics of the vehicle
+This project aims to simulate a [differential drive robot](https://en.wikipedia.org/wiki/Differential_wheeled_robot) by implementing the kinematics of the vehicle
 on a virtual environment.
 
 ## Motivation
