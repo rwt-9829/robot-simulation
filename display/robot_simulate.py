@@ -10,6 +10,7 @@ from model.robot_kinematics import RobotKinematics
 from model.states import RobotState, RobotDerivativeState
 from inputs.control_inputs import WheelLinearInputs
 from utilities.constants import *
+import math
 
 class RobotSimulate1(QObject):
     # sends the robot's state when calculations are finished
@@ -27,6 +28,11 @@ class RobotSimulate1(QObject):
         self.time = 0. # initialize simulation time ot 0
         self.robot_model = RobotKinematics(dt=self.dt)
         self.ticks = 0
+        self.cur_edge = 0
+        self.edge_cnt = 0
+        self.shape = "square"
+        self.n = 10
+        self.circumcircle = True
 
         # setup the timer for the object
         self.simulationTimedThread = QTimer()
@@ -55,8 +61,63 @@ class RobotSimulate1(QObject):
         """
         self.ticks += 1
         self.time += self.dt # step in time
-        inputs = WheelLinearInputs(vl=0.4, vr=0.5)
-        self.robot_model.update(inputs) # update robot state
+        self.cur_edge += self.dt
+
+        if self.shape == "square":
+            inputs = WheelLinearInputs(vl=0.5, vr=0.5)
+            self.robot_model.update(inputs) # update robot state
+            if self.edge_cnt >= 4:
+                return None
+
+            # turn logic (for square)
+            #print(self.cur_edge)
+            if self.cur_edge > 3:
+                inputs = WheelLinearInputs(vl=0, vr=31.41592653)
+                self.robot_model.update(inputs)
+                self.cur_edge = 0
+                self.edge_cnt += 1
+        elif self.shape == "straight":
+            inputs = WheelLinearInputs(vl=0.5, vr=0.5)
+            self.robot_model.update(inputs) # update robot state
+            pass
+        elif self.shape == "hexagon":
+            inputs = WheelLinearInputs(vl=0.5, vr=0.5)
+            self.robot_model.update(inputs) # update robot state
+            if self.edge_cnt >= 6:
+                return None
+
+            # turn logic (for square)
+            #print(self.cur_edge)
+            if self.cur_edge > 3:
+                inputs = WheelLinearInputs(vl=0, vr=31.41592653 * 4 / 6)
+                self.robot_model.update(inputs)
+                self.cur_edge = 0
+                self.edge_cnt += 1
+        elif self.shape == "n-gon":
+            inputs = WheelLinearInputs(vl=5, vr=5)
+            self.robot_model.update(inputs) # update robot state
+            if self.edge_cnt >= self.n:
+                if self.circumcircle:
+                    #inputs = WheelLinearInputs(vl=0, vr=-math.pi * 10 * 4 / self.n)
+                    #self.robot_model.update(inputs)
+                    inputs = WheelLinearInputs(vl=1, vr=1.5945)
+                    self.robot_model.update(inputs) # update robot state
+                else:
+                    return None
+
+            # turn logic (for square)
+            #print(self.cur_edge)
+            if self.cur_edge > 0.25 and self.edge_cnt < self.n - 1:
+                inputs = WheelLinearInputs(vl=0, vr=math.pi * 10 * 4 / self.n)
+                self.robot_model.update(inputs)
+                self.cur_edge = 0
+                self.edge_cnt += 1
+
+            if self.cur_edge > 0.25 and self.edge_cnt == self.n - 1:
+                inputs = WheelLinearInputs(vl=0, vr=math.pi * 5 * 4 / self.n)
+                self.robot_model.update(inputs)
+                self.cur_edge = 0
+                self.edge_cnt += 1
 
         self.finished_signal.emit(self.robot_model.getState()) # emit a signal to tell we're done
 
